@@ -4,9 +4,9 @@ name: Compose CI/CD
 
 on:
   push:
-    branches: [main, master]
+    branches: ["master", "main"]
   pull_request:
-    branches: [main, master]
+    branches: ["master", "main"]
 
 jobs:
   build:
@@ -14,40 +14,23 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v2
 
-    - name: Set up JDK 17
+    - name: Set up JDK
       uses: actions/setup-java@v2
       with:
-        distribution: 'temurin'
-        java-version: '17'
+        java-version: '11'
 
-    - name: Cache Gradle
-      uses: actions/cache@v3
+    - name: Set up Android SDK
+      uses: reactivecircus/android-sdk-installer-action@v2
       with:
-        path: |
-          ~/.gradle/caches
-          ~/.gradle/wrapper
-        key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-        restore-keys: |
-          ${{ runner.os }}-gradle-
-
-    - name: Grant execute permission for gradlew
-      run: chmod +x ./gradlew
+        sdk-version: 'commandlinetools-linux-6609375_latest'
 
     - name: Build Debug APK
       run: ./gradlew assembleDebug
 
     - name: Run Unit Tests
-      run: ./gradlew testDebugUnitTest
-    
-    - name: Start emulator and run UI Tests
-      uses: reactivecircus/android-emulator-runner@v2
-      with:
-        api-level: 30
-        target: google_apis
-        arch: x86_64
-        profile: Nexus 6
-        emulator-options: -no-snapshot -no-boot-anim -accel off -gpu swiftshader_indirect -noaudio
-        disable-animations: true
-        script: ./gradlew connectedDebugAndroidTest
+      run: ./gradlew test
+
+    - name: Run UI Tests
+      run: ./gradlew connectedAndroidTest
