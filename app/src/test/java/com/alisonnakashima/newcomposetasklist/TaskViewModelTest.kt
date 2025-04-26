@@ -33,8 +33,8 @@ class TaskViewModelTest {
 
         val tasks = viewModel.tasks.value
         assertEquals(1, tasks.size)
-        //assertEquals("Treinar", tasks[0].title)
-        assertEquals("error", tasks[0].title) //erro no unit test
+        assertEquals("Treinar", tasks[0].title) //correto para unit test
+        //assertEquals("error", tasks[0].title) //erro no unit test
     }
 
     @Test //Test 2
