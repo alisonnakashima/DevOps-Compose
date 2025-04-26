@@ -22,9 +22,7 @@ jobs:
         java-version: '11'
 
     - name: Set up Android SDK
-      uses: reactivecircus/android-sdk-installer-action@v2
-      with:
-        sdk-version: 'commandlinetools-linux-6609375_latest'
+      uses: android-actions/setup-android@v3
 
     - name: Build Debug APK
       run: ./gradlew assembleDebug
