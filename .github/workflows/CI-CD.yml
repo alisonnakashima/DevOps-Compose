@@ -40,14 +40,14 @@ jobs:
 
     - name: Run Unit Tests
       run: ./gradlew testDebugUnitTest
-
+    
     - name: Start emulator and run UI Tests
       uses: reactivecircus/android-emulator-runner@v2
       with:
         api-level: 30
-        target: google_apis_playstore
+        target: google_apis
         arch: x86_64
         profile: Nexus 6
-        emulator-options: -no-snapshot -no-boot-anim -accel off -gpu swiftshader_indirect
+        emulator-options: -no-snapshot -no-boot-anim -accel off -gpu swiftshader_indirect -noaudio
         disable-animations: true
         script: ./gradlew connectedDebugAndroidTest
