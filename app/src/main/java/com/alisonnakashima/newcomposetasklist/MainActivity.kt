@@ -37,15 +37,21 @@ class TaskViewModel : ViewModel() {
     private val _newTask = MutableStateFlow("")
     val newTask: StateFlow<String> = _newTask
 
+    private val _hasInputError = MutableStateFlow(false)
+    val hasInputError: StateFlow<Boolean> = _hasInputError
+
     fun onTaskTextChange(newValue: String) {
         _newTask.value = newValue
     }
 
     fun addTask() {
         val task = _newTask.value.trim()
-        if (task.isNotEmpty() && !task.contains(Regex("[@#!\$%¨&*]"))) {
+        if (task.isEmpty() || task.contains(Regex("[@#!\$%¨&*]"))) {
+            _hasInputError.value = true
+        } else {
             _tasks.update { it + Task(task) }
             _newTask.value = ""
+            _hasInputError.value = false
         }
     }
 
@@ -73,34 +79,59 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TaskListScreen(viewModel: TaskViewModel) {
     val tasks by viewModel.tasks.collectAsState()
     val newTask by viewModel.newTask.collectAsState()
+    val hasError by viewModel.hasInputError.collectAsState()
 
-    Column(modifier = Modifier.padding(16.dp)) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            OutlinedTextField(
-                value = newTask,
-                onValueChange = { viewModel.onTaskTextChange(it) },
-                label = { Text("Nova tarefa") },
-                modifier = Modifier.weight(1f)
-            )
-            Spacer(modifier = Modifier.width(8.dp))
-            Button(onClick = { viewModel.addTask() }) {
-                Text("Adicionar")
-            }
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        LazyColumn {
-            items(tasks) { task ->
-                TaskItem(
-                    task = task,
-                    onDelete = { viewModel.deleteTask(task) },
-                    onToggle = { viewModel.toggleTask(task) }
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("Lista de Tarefas") },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    titleContentColor = MaterialTheme.colorScheme.onPrimary
                 )
+            )
+        }
+    ) { innerPadding ->
+        Column(modifier = Modifier
+            .padding(innerPadding)
+            .padding(16.dp)
+        ) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                OutlinedTextField(
+                    value = newTask,
+                    onValueChange = {
+                        viewModel.onTaskTextChange(it)
+                    },
+                    label = { Text("Nova tarefa") },
+                    isError = hasError,
+                    supportingText = {
+                        if (hasError) {
+                            Text("Campo vazio ou com símbolos [@#!\$%¨&*]")
+                        }
+                    },
+                    modifier = Modifier.weight(1f)
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Button(onClick = { viewModel.addTask() }) {
+                    Text("Adicionar")
+                }
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            LazyColumn {
+                items(tasks) { task ->
+                    TaskItem(
+                        task = task,
+                        onDelete = { viewModel.deleteTask(task) },
+                        onToggle = { viewModel.toggleTask(task) }
+                    )
+                }
             }
         }
     }
