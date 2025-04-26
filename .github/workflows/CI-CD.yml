@@ -41,6 +41,9 @@ jobs:
     - name: Run Unit Tests
       run: ./gradlew testDebugUnitTest
     
+    - name: Install dependencies
+      run: sudo apt-get install libpulse0
+    
     - name: Start emulator and run UI Tests
       uses: reactivecircus/android-emulator-runner@v2
       with:
@@ -48,6 +51,6 @@ jobs:
         target: google_apis
         arch: x86_64
         profile: Nexus 6
-        emulator-options: -no-snapshot -no-boot-anim -accel off -gpu swiftshader_indirect -noaudio
+        emulator-options: -no-snapshot -no-boot-anim -accel off -gpu swiftshader_indirect
         disable-animations: true
         script: ./gradlew connectedDebugAndroidTest
