@@ -3,15 +3,11 @@
 package com.alisonnakashima.newcomposetasklist
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import com.alisonnakashima.newcomposetasklist.Task
-import com.alisonnakashima.newcomposetasklist.TaskViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
-import kotlinx.coroutines.test.TestCoroutineDispatcher
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.mockito.MockitoAnnotations
 import org.junit.Assert.*
 
 @ExperimentalCoroutinesApi
@@ -22,11 +18,8 @@ class TaskViewModelTest {
     @get:Rule
     var instantExecutorRule = InstantTaskExecutorRule()
 
-    private val dispatcher = TestCoroutineDispatcher()
-
     @Before
     fun setup() {
-        //MockitoAnnotations.openMocks(this)
         viewModel = TaskViewModel()
     }
 
