@@ -46,8 +46,9 @@ jobs:
       with:
         api-level: 30
         target: google_apis
-        arch: x86_64
+        arch: x86
         profile: Nexus 6
+        headless: true
         emulator-options: -no-snapshot -no-boot-anim -accel off -gpu swiftshader_indirect -noaudio
         disable-animations: true
         script: ./gradlew connectedDebugAndroidTest
