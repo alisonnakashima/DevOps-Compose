@@ -1,0 +1,36 @@
+# This is a basic workflow that is manually triggered
+
+name: Compose CI/CD
+
+on:
+  push:
+    branches: ["master", "main"]
+  pull_request:
+    branches: ["master", "main"]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up JDK
+      uses: actions/setup-java@v2
+      with:
+        java-version: '11'
+
+    - name: Set up Android SDK
+      uses: reactivecircus/android-sdk-installer-action@v2
+      with:
+        sdk-version: 'commandlinetools-linux-6609375_latest'
+
+    - name: Build Debug APK
+      run: ./gradlew assembleDebug
+
+    - name: Run Unit Tests
+      run: ./gradlew test
+
+    - name: Run UI Tests
+      run: ./gradlew connectedAndroidTest
